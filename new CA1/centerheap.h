@@ -1,13 +1,15 @@
+#ifndef  centerheap_h
+#define centerheap_h
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include "localq.h"
-#include "../database/database.h"
-#include "../database/relationType.h"
+#include "database.h"
+#include "relationType.h"
+
 using namespace std;
-#ifndef  centerheap_h
-#define centerheap_h
+
 
 template<class T> class centerNode  
 {
@@ -85,7 +87,7 @@ template<class T> class centerNode
             key = value.prof * 100000 + value.aging * 10000 + value.time + value.risk *1000000;
         }
         */
-        key=value.key;
+        key=value.priority;
         degree = 0;
         marked = false;
         left   = this;
@@ -147,22 +149,22 @@ template<class T> class centerHeap
         void remove(T key);   // Delete the node whose key is key
         void destroy();  // destroy
 
-        bool contain_pat(BTree tree, patient_f *pat)
+        bool contain_pat(BTree<op>* tree, patient_f *pat);
 
 
         centerNode<T>* search_id(centerNode<T> *root, int id);
-        void appointment_process(int date, BTree btree_delaytreated, BTree btree_treated, BTree btree_appointment, BTree btree_registered, Maindata<int> center );//process the appoint
-        void mediumRisk_process(int date, BTree btree_delaytreated, BTree btree_treated, BTree btree_appointment, BTree btree_registered, Maindata<int> center); //medium risk process;  
-        void treatment_process(int date, BTree btree_delaytreated, BTree btree_treated, BTree btree_appointment, BTree btree_registered, Maindata<int> center );  // process the treatment
-        void pop_patient_wrtddl(centerNode<T> *root, int ddl, BTree btree_registered, BTree btree_appointment,int date,Maindata<int> center);
-        void withdraw(int id, BTree btree_delaytreated,  BTree btree_appointment, BTree btree_registered, Maindata<int> center);
+        //void appointment_process(int date, BTree<op>* btree_delaytreated, BTree<op>* btree_treated, BTree<op>* btree_appointment, BTree<op>* btree_registered, centerHeap<T>* center );//process the appoint
+        //void mediumRisk_process(int date, BTree<op>* btree_delaytreated, BTree<op>* btree_treated, BTree<op>* btree_appointment, BTree<op>* btree_registered, centerHeap<T>* center); //medium risk process;  
+        //void treatment_process(int date, BTree<op>* btree_delaytreated, BTree<op>* btree_treated, BTree<op>* btree_appointment, BTree<op>* btree_registered,  centerHeap<T>* center );  // process the treatment
+        //void pop_patient_wrtddl(centerNode<T> *root, int ddl, BTree<op>* btree_registered, BTree<op>* btree_appointment,int date,Maindata<T>* center);
+        //void withdraw(int id, BTree<op>* btree_delaytreated,  BTree<op>* btree_appointment, BTree<op>* btree_registered, Maindata<T>* center);
         int check_nearest(int loc_pat);
         //void build(); // Read the hospital general queue
-        void add_patient(patient_f p);
+        //void add_patient(patient_f p);
         void insert(patient_f p);
-        void report_treated(centerNode<T>* head_treatment);
-        void report_appointment(centerNode<T>* head_appointment);
-        void report_registered(centerNode<T>* head_waiting);
+        //void report_treated(centerNode<T>* head_treatment);
+        //void report_appointment(centerNode<T>* head_appointment);
+        //void report_registered(centerNode<T>* head_waiting);
 
         void Listsort_prof(centerNode<T>* head);
         void Listsort_aging(centerNode<T>*  head);
@@ -174,13 +176,16 @@ template<class T> class centerHeap
         void add_head(centerNode<T> *N,centerNode<T> *H);
         int count_list(centerNode<T> *head);
         
-        void week_report();
-        void month_report();
+        //void week_report();
+        //void month_report();
         void print(centerNode<T> *node, centerNode<T> *prev, int direction);  // Print "Fibonacci heap"
         void delete_head(centerNode<T> *N,centerNode<T> *H);
         void print();
         void iteregister(centerNode<T> *node, centerNode<T> *prev, int direction);
         int go(int waiting,centerNode<T> *node, centerNode<T> *prev, int direction);
+        void removeit(centerNode<T> *node){
+            remove(node);
+        }
     private:
         
         void removeNode(centerNode<T> *node);  // Remove node from the double-linked list (not a complete delete)

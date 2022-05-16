@@ -1,13 +1,14 @@
+#ifndef localq_h
+#define localq_h
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#include <relationType.h>
-#include <../database/database.h>
+#include "relationType.h"
+#include "database.h"
 using namespace std;
 
-#ifndef localq_h
-#define localq_h
+
 
 void daily_hosp_setZero(void);
 
@@ -117,7 +118,7 @@ int len_N=0;   // the number of patient
 hospital* H[3]; //three hospital
 int content_total = 0;
 int capacity_total;
-localQueue<patient_f*> build_queue (BTree btree_registered);
+localQueue<patient_f*> build_queue (BTree<op> *btree_registered);
 
 #endif
 

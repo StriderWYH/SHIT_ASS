@@ -5,15 +5,16 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include<string>
+#include <string>
+#include <stdio.h>
 #include "localq.h"
 #include "centerheap.h"
-#include <relationType.h>
+#include "relationType.h"
 #include <sstream>
-#include <database.h>
+#include "database.h"
 
 using namespace std;
-
+extern int date_treat;
 void daily_hosp_setZero(void){
     for(int i = 0; i < 3;i++){
         H[i]->content = 0;
@@ -50,14 +51,29 @@ int centerHeap<T>::check_nearest(int loc_pat)
     
 }
 
+extern int file_counter;
+extern int day;
 
-localQueue<patient_f*>  build_queue (BTree btree_registered){
+localQueue<patient_f*>  build_queue (BTree<op>* btree_registered){
     
+    file_counter ++;
     localQueue<patient_f*> palist;
     char filename[256];
+    string tmpered = to_string(file_counter) + to_string(day)+".csv";
+    int i;
+    for( i=0;i<tmpered.length();i++)
+        filename[i] = tmpered[i];
+    filename[i] = '\0';//注意，一定要手动加上 '\0'
+    /*
     cout<<"请输入文件名"<<endl;
     cin>>filename;
+    */
     int omitline = 0; // the line to be neglected
+
+    if(file_counter == 3){
+        file_counter = 0;
+    }
+
     ifstream infile(filename);
     
     while(infile.good()){
@@ -150,17 +166,17 @@ localQueue<patient_f*>  build_queue (BTree btree_registered){
                         switch(pat->treatment_type){
                             case 0:
                                 if(pat->risk == 0 || 1){
-                                    pat->key = pat->prof * 100000 + pat->aging * 10000 + pat->time;
+                                    pat->priority = pat->prof * 100000 + pat->aging * 10000 + pat->time;
                                 }
                                 else{
-                                    pat->key = pat->prof * 100000 + pat->aging * 10000 + pat->time + pat->risk *1000000;
+                                    pat->priority = pat->prof * 100000 + pat->aging * 10000 + pat->time + pat->risk *1000000;
                                 }
                                 break;
                             case 1:
-                                pat->key = 10-(pat->aging);
+                                pat->priority = 10-(pat->aging);
                                 break;
                             case 2:
-                                pat->key = pat->time;
+                                pat->priority = pat->time;
                                 break;
                         }
                         item = -2;
@@ -170,8 +186,7 @@ localQueue<patient_f*>  build_queue (BTree btree_registered){
             }
             palist.En_queue(pat);
             op tmp = op(date_treat,pat->id);
-            btree_registered.BTree_insert(tmp);
-            cout << endl;
+            btree_registered->BTree_insert(tmp);
         }
         /*
         patient_f* pat = new patient_f();

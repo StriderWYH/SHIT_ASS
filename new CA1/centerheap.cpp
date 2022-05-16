@@ -1,4 +1,3 @@
-
 #ifndef _FIBONACCI_TREE_HPP_
 #define _FIBONACCI_TREE_HPP_
 
@@ -8,6 +7,7 @@
 #include <cmath>
 #include "localq.h"
 #include "centerheap.h"
+#include "btree.h"
 using namespace std;
 
 
@@ -513,8 +513,7 @@ centerNode<T>* centerHeap<T>::search(T key)
 
     return search(min, key);
 }
-template <class T>
-centerNode<T>* centerHeap<T>::search_id(centerNode<T> *root, int id)
+template <class T> centerNode<T>* centerHeap<T>::search_id(centerNode<T> *root, int id)
 {
     centerNode<T> *t = root;    // temporary node
     centerNode<T> *p = NULL;    // node to search
@@ -540,10 +539,10 @@ centerNode<T>* centerHeap<T>::search_id(centerNode<T> *root, int id)
     return p;
 }
 template <class T>
-void centerHeap<T>::pop_patient_wrtddl(centerNode<T> *root, int ddl, BTree btree_registered, BTree btree_appointment,int date, Maindata<int> center) //返回指向当天有ddl的病人的指针
+void Maindata<T>::pop_patient_wrtddl(centerNode<T> *root, int ddl, BTree<op>* btree_registered, BTree<op>* btree_appointment,int date, centerHeap<T>* center) //返回指向当天有ddl的病人的指针
 {
     centerNode<T> *t = root;    // temporary node
-    patient_f temper =  center.retrievepatient_f(t->id);
+    patient_f temper = retrievepatient_f(t->id);
     patient_f *temp = &temper;
 
     if (root==NULL)
@@ -553,15 +552,15 @@ void centerHeap<T>::pop_patient_wrtddl(centerNode<T> *root, int ddl, BTree btree
     {
         if ( temp->treat_ddl == ddl){
             temp->treat_time = ddl + 10;
-            temp->treat_hospital = check_nearest(temp->loc);
+            temp->treat_hospital = center->check_nearest(temp->loc);
             op temper = op(temp->time,temp->id);
-            btree_registered.BTree_delete(temper);
+            btree_registered->BTree_delete(temper);
             op temper_appoint = op(date,temp->id);
-            btree_appointment.BTree_insert(temper_appoint);
-            center.modify(min->id,temp);
-            remove(t);
+            btree_appointment->BTree_insert(temper_appoint);
+            modify(center->min->id,temp);
+            center->removeit(t);
         }else{
-            pop_patient_wrtddl(t->child, ddl,date,center); 
+            pop_patient_wrtddl(t->child, ddl,btree_registered,btree_appointment,date,center); 
         }
         t = t->right;
     } while (t != root);
